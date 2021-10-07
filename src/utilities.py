@@ -5,8 +5,12 @@ SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+BACKGROUND_COLOR = (0, 0, 0)
 
 def calculateapproach(x, y, xspeed, yspeed, objx=SCREEN_WIDTH/2, objy=SCREEN_HEIGHT/2):
+    """
+    calculates the speed in the x and y axis and gives the ant a reasonable speed
+    """
     xdist = x - objx
     ydist = y - objy
     if xdist != 0 and ydist != 0:
@@ -39,10 +43,11 @@ def allpeopleinarea(x, y, startx, starty, finishx, finishy, height):
     #now let's define a range of b's
     rangeslope = [b-(height/2), b+(height/2)]
     #ok now let's checl whether or not the points are part of said line in said range.
-    #if that;s the case then the results for the highest and lowest slopes should be of different sign when subtracted to y:
+    #if that;s the case then y will be between the results of slope max and min
     ymin = slope * x + rangeslope[0]
     ymax = slope * x + rangeslope[1]
-    if y>=ymin and y<=ymax:
-        if y >= min(starty, finishx) and y <= max(starty, finishy):
+    if y>=ymin and y<=ymax: #if in the boundary
+        if y >= min(starty, finishx) and y <= max(starty, finishy): #if between the food and the nest
             return True
+    #in any other case
     return False
