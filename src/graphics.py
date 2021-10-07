@@ -6,7 +6,7 @@ import pygame
 import random
 
 ants = []
-for _ in range(150):
+for _ in range(300):
     a = ant()
     ants.append(a)
 
@@ -34,6 +34,6 @@ while True:
 
     for ant in ants:
         pygame.draw.circle(SCREEN, {False:RED, True:BLUE}[ant.returningtobase], (ant.x, ant.y), 3)
-        foodlife = ant.nextstep(foodx, foody, foodsize)
+        ant.nextstep(foodx, foody, foodsize)
         
     pygame.display.update()
