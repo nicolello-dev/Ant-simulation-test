@@ -1,6 +1,6 @@
 #ant.py
 
-from utilities import SCREEN_WIDTH, SCREEN_HEIGHT, calculateapproach
+from utilities import SCREEN_WIDTH, SCREEN_HEIGHT, calculateapproach, allpeopleinarea
 import random
 #0 is right, 90 is up, 180 is left, 270 is down
 class ant():
@@ -23,18 +23,23 @@ class ant():
             return num>=low and num<=high
 
 
-        if (compreso(self.x, foodx-size, foodx+size) and compreso(self.y, foody-size, foody+size)) or self.returningtobase:
+        if (compreso(self.x, foodx-size, foodx+size) and compreso(self.y, foody-size, foody+size)) or self.returningtobase: # if the ant is returning to base or has just eaten the food
             self.returningtobase = True
-            if compreso(self.x, (SCREEN_WIDTH/2)-20, (SCREEN_WIDTH/2)+20) and compreso(self.y, (SCREEN_HEIGHT/2)-20, (SCREEN_HEIGHT/2)+20):
+            if compreso(self.x, (SCREEN_WIDTH/2)-20, (SCREEN_WIDTH/2)+20) and compreso(self.y, (SCREEN_HEIGHT/2)-20, (SCREEN_HEIGHT/2)+20): #if the ant has arrived to the base
                 self.returningtobase = False
                 self.xmovement = random.randrange(10, 100) / 100
                 self.xmovement = {0:self.xmovement, 1:-self.xmovement}[random.randint(0, 1)]
                 self.ymovement = random.randrange(10, 100) / 100
                 self.ymovement = {0:self.ymovement, 1:-self.ymovement}[random.randint(0, 1)]
                 
+            else: #if the ant is returning to base
+                self.xmovement, self.ymovement = calculateapproach(self.x, self.y, self.xmovement, self.ymovement)
+        else: #if the ant is wandering
+            if False: #allpeopleinarea(self.x, self.y, foodx, foody, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, 10):
+                self.xmovement, self.ymovement = calculateapproach(self.x, self.y, self.xmovement, self.ymovement)
             else:
-                self.xmovement, self.ymovement = calculateapproach(self.x, self.y, self.xmovement, self.ymovement, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-                
+                self.xmovement += (random.randrange(0, 30) / 300) - 0.05
+                self.ymovement += (random.randrange(0, 30) / 300) - 0.05
     
         if self.x >= SCREEN_WIDTH or self.x <= 0:
             self.xmovement = -self.xmovement
