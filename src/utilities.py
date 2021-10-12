@@ -1,11 +1,12 @@
 #utilities.py
 
 foodsize = 30
-SCREEN_WIDTH = 1600
-SCREEN_HEIGHT = 900
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 1024
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 BACKGROUND_COLOR = (0, 0, 0)
+AREA = 30
 
 def calculateapproach(x, y, xspeed, yspeed, objx=SCREEN_WIDTH/2, objy=SCREEN_HEIGHT/2):
     """
@@ -28,26 +29,9 @@ def calculateapproach(x, y, xspeed, yspeed, objx=SCREEN_WIDTH/2, objy=SCREEN_HEI
     return xspeed, 0
 
 
-def allpeopleinarea(x, y, startx, starty, finishx, finishy, height):
-    """
-    returns whether or not the ant is in a rectangle between the food center and the base with height height
-    """
-
-    #first determine the slope of the line connecting the two dots
-    #slope of a line is deltax/deltay
-    slope = -(startx-finishx)/(starty-finishy)
-    #now the equation of the line will be
-    #y=slope*x + b
-    #let's find b
-    b = finishy - (slope*finishx)
-    #now let's define a range of b's
-    rangeslope = [b-(height/2), b+(height/2)]
-    #ok now let's checl whether or not the points are part of said line in said range.
-    #if that;s the case then y will be between the results of slope max and min
-    ymin = slope * x + rangeslope[0]
-    ymax = slope * x + rangeslope[1]
-    if y>=ymin and y<=ymax: #if in the boundary
-        if y >= min(starty, finishx) and y <= max(starty, finishy): #if between the food and the nest
-            return True
-    #in any other case
-    return False
+if __name__ == '__main__':
+    startx = 20
+    starty = 40
+    finishx = finishy = 60
+    slope = (startx-finishx)/(starty-finishy)
+    print(slope)
