@@ -1,6 +1,6 @@
 #ant.py
 
-from utilities import SCREEN_WIDTH, SCREEN_HEIGHT, calculateapproach, AREA
+from utilities import SCREEN_WIDTH, SCREEN_HEIGHT, compreso
 import random
 #0 is right, 90 is up, 180 is left, 270 is down
 class ant():
@@ -14,16 +14,21 @@ class ant():
         self.returningtobase = False
         self.xmovement *= multiplier
         self.ymovement *= multiplier
+    
     def nextstep(self, foodx, foody, size, tofood=False):
         """
         changes ant.x and ant.y
         """
 
-        def compreso(num, low, high):
-            """
-            checks whether or not a number is between low and high
-            """
-            return num>=low and num<=high
+        def inratio(num1, num2, highest):
+            high = max(num1, num2)
+            low = min(num2, num1)
+            ratio = high/highest
+            high = highest
+            low = low * ratio
+            if num1 > num2:
+                return high, low
+            return low, high
 
 
         if (compreso(self.x, foodx-size, foodx+size) and compreso(self.y, foody-size, foody+size)) or self.returningtobase or tofood: # if the ant is returning to base or has just eaten the food
@@ -36,12 +41,16 @@ class ant():
                 self.ymovement = random.randrange(10, 100) / 100
                 self.ymovement = {0:self.ymovement, 1:-self.ymovement}[random.randint(0, 1)]
                 
-            else: #if the ant is returning to base
-                self.xmovement, self.ymovement = calculateapproach(self.x, self.y, self.xmovement, self.ymovement) #make it go in the direction of the nest
-        else:
-            #modify randomly the movement speed
-            self.xmovement += (random.randrange(0, 30) / 300) - 0.05
-            self.ymovement += (random.randrange(0, 30) / 300) - 0.05
+            elif not tofood: #if the ant is returning to base
+                self.xmovement, self.ymovement = self.calculateapproach(self.x, self.y, self.xmovement, self.ymovement) #make it go in the direction of the nest
+            else:
+                self.xmovement, self.ymovement = self.calculateapproach(self.x, self.y, self.xmovement, self.ymovement, foodx, foody) #make it go in the direction of the nest
+        #modify randomly the movement speed
+        self.xmovement += (random.randrange(0, 30) / 300) - 0.05
+        self.ymovement += (random.randrange(0, 30) / 300) - 0.05
+
+        if self.xmovement > 2 or self.ymovement > 2:
+            self.xmovement, self.ymovement = inratio(self.xmovement, self.ymovement, 2)
 
         if self.x >= SCREEN_WIDTH or self.x <= 0: #make it bounce
             self.xmovement = -self.xmovement
@@ -52,6 +61,26 @@ class ant():
         self.y += self.ymovement #change the position
 
         tofood=False
+
+    def calculateapproach(self, x, y, xspeed, yspeed, objx=SCREEN_WIDTH/2, objy=SCREEN_HEIGHT/2):
+        """
+        calculates the speed in the x and y axis and gives the ant a reasonable speed
+        """
+        xdist = x - objx
+        ydist = y - objy
+        if xdist == 0:
+            return 0, yspeed
+        if ydist != 0:
+            summ = xspeed + yspeed
+            const = xdist/ydist
+            yspeed = summ/(const+1)
+            xspeed = yspeed * const
+            yspeed = -abs(yspeed) if y > objy else abs(yspeed)
+            xspeed = -abs(xspeed) if x > objx else abs(xspeed)
+            if abs(xspeed) < 0.25 or abs(yspeed) < 0.25:
+                xspeed, yspeed = xspeed * 4, yspeed * 4
+            return xspeed, yspeed
+        return xspeed, 0
 
         
         
